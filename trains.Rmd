@@ -52,7 +52,8 @@ train %>%
   group_by(treatment) %>%
   summarise(avg_inc = mean(income)) %>%
   pivot_wider(names_from = treatment, 
-              values_from = avg_inc)
+              values_from = avg_inc) %>%
+  mutate(difference = Control - Treated)
   
 ```
 

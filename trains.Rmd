@@ -1,0 +1,59 @@
+---
+title: "Trains"
+author: "Saul Soto"
+date: "3/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gov.1005.data)
+library(tidyverse)
+library(infer)
+```
+
+```{r train}
+avg_treat <- train %>%
+  filter(treatment == "Treated") %>%
+  rep_sample_n(size = 51, replace = TRUE, reps = 3) %>%
+  group_by(replicate) %>%
+  summarise(avg_inc = mean(income))
+
+avg_treat_control <- train %>%
+  filter(treatment == "Control") %>%
+  summarise(avg_inc = mean(income))
+
+avg_treat_treatment <- train %>%
+  filter(treatment == "Treated") %>%
+  summarise(avg_inc = mean(income))
+
+avg_difference <- avg_treat_control - avg_treat_treatment
+
+avg_confidence <- avg_treat %>%
+  pull(avg_inc) %>%
+  quantile(c(0.025, 0.975))
+
+avg_control <- train %>%
+  filter(treatment == "Control") %>%
+  rep_sample_n(size = 51, replace = TRUE, reps = 3) %>%
+  group_by(replicate) %>%
+  summarise(avg_inc = mean(income)) %>%
+  pull(avg_inc) %>%
+  quantile(c(0.025, 0.975))
+
+# Want 95% confidence interval using percentile method
+
+
+```
+
+```{r ci_difference}
+
+train %>%
+  group_by(treatment) %>%
+  summarise(avg_inc = mean(income)) %>%
+  pivot_wider(names_from = treatment, 
+              values_from = avg_inc)
+  
+```
+
+
